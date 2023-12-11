@@ -1,38 +1,159 @@
-async function enterAppraiser(url, searchQuery) {
+const puppeter = require("puppeteer");
+
+
+
+async function regrid(regridSearched) {
+
     try {
 
-        const browser = await puppeter.launch({ headless: false });
-        const page = await browser.newPage()
-        await page.goto(url);
+        let retornoRegrid = [];
+
+        const regrid_browser = await puppeter.launch({ headless: false });
+        const regrid_page = await regrid_browser.newPage()
+
+
+        await regrid_page.goto('https://app.regrid.com/us/#b=admin');
+
+        await regrid_page.focus('input[name="search"]');
+
+        await regrid_page.keyboard.type(regridSearched);
+
+        await regrid_page.keyboard.press('Enter');
+
+        await regrid_page.waitForSelector('.parcel-details');
+
+
+        const linhas = await regrid_page.$$('tr');
+
+        let coordenadas;
+        let appraiserUrl;
+        let taxinfo;
+
+        for (let index = 0; index < linhas.length; index++) {
+
+            const linha = linhas[index];
+
+            const dado = await regrid_page.evaluate(linha => linha.textContent, linha);
 
 
 
-        await page.focus('#parcel-search-property-key');
 
-        await page.keyboard.type(searchQuery);
+            let coord = dado.includes('Centroid Coordinates');
 
-        await page.keyboard.press('Enter');
+            let urlApp = dado.includes('Source URL');
 
-
-
-
-        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+            let tax = dado.includes('Tax Info URL');
 
 
+            if (tax) {
+                taxinfo = dado.replace('Tax Info URL', '')
+            }
 
-        await page.pdf({ path: searchQuery + '.pdf', margin: "none", })
+            if (urlApp) {
+                appraiserUrl = dado.replace('Source URL', '');
 
-        await browser.close();
+            }
 
-        return true;
+            if (coord) {
 
+                coordenadas = dado.replace('Centroid Coordinates', '');
+
+
+            }
+
+        }
+
+        const urlRegrid = regrid_page.url();
+
+        retornoRegrid.push(taxinfo, appraiserUrl, coordenadas, urlRegrid);
+
+
+
+
+
+        await regrid_browser.close();
+
+        return retornoRegrid;
 
 
 
     } catch (error) {
-        console.log(error)
+
     }
 }
 
 
+
+
+async function houseValue() {
+
+    try {
+
+
+        const browser = await puppeter.launch({ headless: false });
+        const page = await browser.newPage();
+        await page.goto("https://login.propstream.com/", {
+            timeout: 60000,
+            waitUntil: "domcontentloaded",
+        });
+
+        await page.type('[name="username"]', "ruthvasco4x4@gmail.com");
+        await page.type('[name="password"]', "Ruth131523#");
+
+        //type="submit"
+        await page.click('[type="submit"]');
+        await page.waitForNavigation();
+
+        await page.waitForSelector("._1vzm3__dashboardSearchItem");
+
+        await page.type(
+            '[type="text"]',
+            "1618 N Brookfield St, South Bend, IN 46628"
+        );
+
+        await page.focus('[type="text"]');
+
+        await page.waitForSelector("#react-autowhatever-1--item-0");
+
+        await page.click("#react-autowhatever-1--item-0");
+
+        await page.waitForSelector("._3GqYV__title");
+
+
+
+        let valorCasa = [];
+
+
+        const linhas = await page.$$("._2q6qs__value");
+
+        for (let index = 0; index < linhas.length; index++) {
+            const linha = linhas[index];
+
+            const dado = await page.evaluate((linha) => linha.textContent, linha);
+
+            valorCasa.push(dado);
+        }
+
+        await browser.close();
+        return valorCasa[0];
  
+
+    } catch (error) {
+        reject(error);
+    }
+
+}
+
+async function constuirCasa() {
+
+
+    const valorCasa = await houseValue();
+    console.log(valorCasa);
+
+    const regridCasa = await regrid('018-7013-049701');
+    console.log(regridCasa[3]);
+
+
+}
+
+constuirCasa();

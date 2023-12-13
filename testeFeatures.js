@@ -143,6 +143,27 @@ async function googleMaps(coordenadas) {
   }
 }
 
+async function fema(endereco) {
+  try {
+    const femaBrowser = await puppeter.launch({ headless: false });
+
+    const femaPage = await femaBrowser.newPage();
+
+    const addresFema =
+      "https://msc.fema.gov/portal/search?AddressQuery=" + endereco;
+
+    await femaPage.goto(addresFema);
+
+    const urlFema = femaPage.url();
+
+    femaBrowser.close();
+
+    return urlFema;
+  } catch (error) {
+    reject(error);
+  }
+}
+
 async function constuirCasa() {
   const valorCasa = await houseValue();
   console.log(valorCasa);
@@ -152,6 +173,10 @@ async function constuirCasa() {
 
   const maps = await googleMaps(regridCasa[2]);
   console.log(maps);
+
+  const femaURL = await fema(maps[0]);
+  console.log(femaURL);
+
 }
 
 constuirCasa();

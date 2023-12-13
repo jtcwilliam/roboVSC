@@ -1,5 +1,7 @@
 const puppeter = require("puppeteer");
 
+const mysql = require("mysql2");
+
 async function regrid(regridSearched) {
   try {
     let retornoRegrid = [];
@@ -164,11 +166,61 @@ async function fema(endereco) {
   }
 }
 
-async function constuirCasa() {
+async function inserirBanco(
+  parcel,
+  flood,
+  auction,
+  regridUrl,
+  aprraisalUrl,
+  google,
+  minimo,
+  observacao,
+  dataUp,
+  marketValue, 
+  status
+) {
+  try {
+    const connection = mysql.createConnection({
+      host: "appraiser.mysql.dbaas.com.br",
+      user: "appraiser",
+      password: "M@r1@He1en@",
+      database: "appraiser",
+    });
+
+    let stmt = `INSERT INTO apps ( parcel ,flood,auction, regridUrl, aprraisalUrl, google, minimo , observacao , dataUp,marketValue ,status)  VALUES ?`;
+    let todos = [
+      [
+        parcel,
+        flood,
+        auction,
+        regridUrl,
+        aprraisalUrl,
+        google,
+        minimo,
+        observacao,
+        dataUp,
+        marketValue,
+        status,
+      ],
+    ];
+
+    connection.query(stmt, [todos], (err, results, fields) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      // get inserted rows
+      console.log("Row inserted:" + results.affectedRows);
+    });
+  } catch (error) {
+    reject(error);
+  }
+}
+
+async function constuirCasa(parcelID) {
   const valorCasa = await houseValue();
   console.log(valorCasa);
 
-  const regridCasa = await regrid("018-7013-049701");
+  const regridCasa = await regrid(parcelID);
   console.log(regridCasa);
 
   const maps = await googleMaps(regridCasa[2]);
@@ -177,6 +229,26 @@ async function constuirCasa() {
   const femaURL = await fema(maps[0]);
   console.log(femaURL);
 
+  const date = new Date();
+
+  const dataUP =
+    date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+
+  const bancoDados = await inserirBanco(
+    parcelID,
+    femaURL,
+    "17",
+    regridCasa[3],
+    regridCasa[1],
+    maps[1],
+    "20000",
+    regridCasa[0],
+    dataUP,
+    valorCasa,
+    "1"
+  );
+
+  console.log(bancoDados);
 }
 
-constuirCasa();
+constuirCasa("018-7013-049701");

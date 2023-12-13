@@ -176,7 +176,7 @@ async function inserirBanco(
   minimo,
   observacao,
   dataUp,
-  marketValue, 
+  marketValue,
   status
 ) {
   try {
@@ -210,6 +210,8 @@ async function inserirBanco(
       }
       // get inserted rows
       console.log("Row inserted:" + results.affectedRows);
+
+      connection.close();
     });
   } catch (error) {
     reject(error);
@@ -248,7 +250,8 @@ async function constuirCasa(parcelID) {
     "1"
   );
 
-  console.log(bancoDados);
+  
 }
 
-constuirCasa("018-7013-049701");
+
+constuirCasa('018-7037-1498');

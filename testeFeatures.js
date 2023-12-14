@@ -4,6 +4,9 @@ const mysql = require("mysql2");
 
 let parcels = [
   
+  ["018-4116-4383", "$348,76"],
+  ["018-7038-1546", "$32.151,29"],
+  ["018-8085-3289", "$4.492,89"],
 ];
 
 async function regrid(regridSearched, minimo) {

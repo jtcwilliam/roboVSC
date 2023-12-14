@@ -3,10 +3,15 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
-  
-  ["018-4116-4383", "$348,76"],
-  ["018-7038-1546", "$32.151,29"],
-  ["018-8085-3289", "$4.492,89"],
+  ["018-2125-4586", "$3.424,12"],
+  ["028-1002-0166", "$3.072,65"],
+  ["018-8010-047601", "$3.327,02"],
+  ["018-2058-2107", "$599,54"],
+
+  ["018-7040-1610", "$2.392,27"],
+  ["018-4015-0530", "$4.543,16"],
+  ["018-7042-1646", "$336,67"],
+  ["018-7042-1648", "$612,90"],
 ];
 
 async function regrid(regridSearched, minimo) {
@@ -258,17 +263,14 @@ async function inserirBanco(
 }
 
 async function constuirCasa(parcelID, minimo) {
+  console.log(`Inicio Parcel: ${parcelID}`);
   const regridCasa = await regrid(parcelID, minimo);
-  console.log(regridCasa);
 
   const maps = await googleMaps(regridCasa[2]);
-  console.log(maps);
 
-  const valorCasa = await houseValue(maps[0]);
-  console.log(valorCasa);
+  //  const valorCasa = await houseValue(maps[0]);
 
   const femaURL = await fema(maps[0]);
-  console.log(femaURL);
 
   const date = new Date();
 
@@ -290,6 +292,27 @@ async function constuirCasa(parcelID, minimo) {
     valorCasa[0],
     valorCasa[2]
   );
+
+  /*
+
+  const bancoDados = await inserirBanco(
+    parcelID,
+    femaURL,
+    "17",
+    regridCasa[3],
+    regridCasa[1],
+    maps[1],
+    regridCasa[4],
+    regridCasa[0],
+    dataUP,
+    null,
+    "1",
+    null,
+    null
+  );
+  */
+
+  console.log(`\n fim do parcel: ${parcelID} \n`);
 }
 
 //['018-7038-1546','$32.151,29'],

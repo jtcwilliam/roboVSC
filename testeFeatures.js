@@ -2,7 +2,16 @@ const puppeter = require("puppeteer");
 
 const mysql = require("mysql2");
 
-async function regrid(regridSearched) {
+let parcels = [
+  
+  ["018-4116-4383", "$348,76"],
+  ["018-7038-1546", "$32.151,29"],
+  ["018-8085-3289", "$4.492,89"],
+  ["018-8040-1601", "$6.359,95"],
+  ["018-4115-4313", "$38.319,34"],
+];
+
+async function regrid(regridSearched, minimo) {
   try {
     let retornoRegrid = [];
 
@@ -55,7 +64,7 @@ async function regrid(regridSearched) {
 
     const urlRegrid = regrid_page.url();
 
-    retornoRegrid.push(taxinfo, appraiserUrl, coordenadas, urlRegrid);
+    retornoRegrid.push(taxinfo, appraiserUrl, coordenadas, urlRegrid, minimo);
 
     await regrid_browser.close();
 
@@ -63,10 +72,15 @@ async function regrid(regridSearched) {
   } catch (error) {}
 }
 
-async function houseValue() {
+async function houseValue(addres) {
   try {
     const browser = await puppeter.launch({ headless: false });
     const page = await browser.newPage();
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+    });
+
     await page.goto("https://login.propstream.com/", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
@@ -75,16 +89,12 @@ async function houseValue() {
     await page.type('[name="username"]', "ruthvasco4x4@gmail.com");
     await page.type('[name="password"]', "Ruth131523#");
 
-    //type="submit"
     await page.click('[type="submit"]');
     await page.waitForNavigation();
 
     await page.waitForSelector("._1vzm3__dashboardSearchItem");
 
-    await page.type(
-      '[type="text"]',
-      "1618 N Brookfield St, South Bend, IN 46628"
-    );
+    await page.type('[type="text"]', `${addres}`);
 
     await page.focus('[type="text"]');
 
@@ -106,8 +116,35 @@ async function houseValue() {
       valorCasa.push(dado);
     }
 
+    await page.waitForSelector(".CDqWq__rightSide");
+
+    await page.click(
+      '[class="_3FtuS__border-blue _31TrE__wideButton _3LneW__tealButton"]'
+    );
+
+    const linhasHOA = await page.$$(".twfRj__item");
+
+    let hoa;
+    for (let index = 0; index < linhasHOA.length; index++) {
+      const linha = linhasHOA[index];
+
+      const lHOA = await page.evaluate((linha) => linha.textContent, linha);
+
+      if (linhasHOA.indexOf(linha) == 9) {
+        hoa = lHOA;
+      }
+    }
+
+    hoa = hoa.replace("HOA/COA", "");
+
+    console.log(hoa, valorCasa[0]);
+
+    let linkHouse = page.url();
+
+    const casafinal = [hoa, valorCasa[0], linkHouse];
+
     await browser.close();
-    return valorCasa[0];
+    return casafinal;
   } catch (error) {
     reject(error);
   }
@@ -177,7 +214,9 @@ async function inserirBanco(
   observacao,
   dataUp,
   marketValue,
-  status
+  status,
+  hoa,
+  details
 ) {
   try {
     const connection = mysql.createConnection({
@@ -187,7 +226,7 @@ async function inserirBanco(
       database: "appraiser",
     });
 
-    let stmt = `INSERT INTO apps ( parcel ,flood,auction, regridUrl, aprraisalUrl, google, minimo , observacao , dataUp,marketValue ,status)  VALUES ?`;
+    let stmt = `INSERT INTO apps ( parcel ,flood,auction, regridUrl, aprraisalUrl, google, minimo , observacao , dataUp,marketValue ,status, hoa, details)  VALUES ?`;
     let todos = [
       [
         parcel,
@@ -201,6 +240,8 @@ async function inserirBanco(
         dataUp,
         marketValue,
         status,
+        hoa,
+        details,
       ],
     ];
 
@@ -218,15 +259,15 @@ async function inserirBanco(
   }
 }
 
-async function constuirCasa(parcelID) {
-  const valorCasa = await houseValue();
-  console.log(valorCasa);
-
-  const regridCasa = await regrid(parcelID);
+async function constuirCasa(parcelID, minimo) {
+  const regridCasa = await regrid(parcelID, minimo);
   console.log(regridCasa);
 
   const maps = await googleMaps(regridCasa[2]);
   console.log(maps);
+
+  const valorCasa = await houseValue(maps[0]);
+  console.log(valorCasa);
 
   const femaURL = await fema(maps[0]);
   console.log(femaURL);
@@ -243,15 +284,21 @@ async function constuirCasa(parcelID) {
     regridCasa[3],
     regridCasa[1],
     maps[1],
-    "20000",
+    regridCasa[4],
     regridCasa[0],
     dataUP,
-    valorCasa,
-    "1"
+    valorCasa[1],
+    "1",
+    valorCasa[0],
+    valorCasa[2]
   );
-
-  
 }
 
+//['018-7038-1546','$32.151,29'],
+async function listaScasas() {
+  for await (casas of parcels) {
+    await constuirCasa(casas[0], casas[1]);
+  }
+}
 
-constuirCasa('018-7037-1498');
+listaScasas();

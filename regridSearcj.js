@@ -3,11 +3,12 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
+  ["020-1064-0149", "$3.128,44"],
   //["020-1064-0146", "$585,93"],
-  ["018-2090-3374", "$46.213,78"],
-  ["018-1045-1944", "$3.181,09"],
+  //["018-2090-3374", "$46.213,78"],
+
   /*
-  
+  ["018-1045-1944", "$3.181,09"],
   ["018-7047-1812", "$7.836,45"],
   ["018-7037-1498", "$53.532,83"],
   ["018-4016-0550", "$7.127,36"],
@@ -64,6 +65,8 @@ async function regrid(regridSearched, minimo) {
       waitUntil: "domcontentloaded",
     });
 
+    //name="user[email]"
+
     await regrid_page.type('[name="user[email]"]', "jtcwilliam@gmail.com");
     await regrid_page.type('[name="user[password]"]', "harlem");
 
@@ -79,48 +82,19 @@ async function regrid(regridSearched, minimo) {
       }
     );
 
+ 
+    
+
+    await regrid_page.waitForSelector(".mapboxgl-ff");
+
+ 
+
     await regrid_page.type('[name="search"]', regridSearched);
 
-    await regrid_page.waitForSelector(".parcel-details");
+    await regrid_page.focus('input[name="search"]');
+ 
 
-    const linhas = await regrid_page.$$("tr");
-
-    let coordenadas;
-    let appraiserUrl;
-    let taxinfo;
-
-    for (let index = 0; index < linhas.length; index++) {
-      const linha = linhas[index];
-
-      const dado = await regrid_page.evaluate(
-        (linha) => linha.textContent,
-        linha
-      );
-
-      let coord = dado.includes("Centroid Coordinates");
-
-      let urlApp = dado.includes("Source URL");
-
-      let tax = dado.includes("Tax Info URL");
-
-      if (tax) {
-        taxinfo = dado.replace("Tax Info URL", "");
-      }
-
-      if (urlApp) {
-        appraiserUrl = dado.replace("Source URL", "");
-      }
-
-      if (coord) {
-        coordenadas = dado.replace("Centroid Coordinates", "");
-      }
-    }
-
-    const urlRegrid = regrid_page.url();
-
-    retornoRegrid.push(taxinfo, appraiserUrl, coordenadas, urlRegrid, minimo);
-
-    //await regrid_browser.close();
+    await regrid_page.keyboard.press("Enter");
 
     return retornoRegrid;
   } catch (error) {}
@@ -148,9 +122,7 @@ async function houseValue(addres) {
 
     await page.waitForSelector("._1vzm3__dashboardSearchItem");
 
-    const casinha = await page.type('[type="text"]', `${addres}`);
-
-    console.log(casinha);
+    await page.type('[type="text"]', `${addres}`);
 
     await page.focus('[type="text"]');
 
@@ -198,8 +170,6 @@ async function houseValue(addres) {
     let linkHouse = page.url();
 
     const casafinal = [hoa, valorCasa[0], linkHouse];
-
-    console.log(casafinal);
 
     await browser.close();
     return casafinal;
@@ -321,9 +291,10 @@ async function constuirCasa(parcelID, minimo) {
   console.log(`Inicio Parcel: ${parcelID}`);
   const regridCasa = await regrid(parcelID, minimo);
 
+  /*
   const maps = await googleMaps(regridCasa[2]);
 
-  const valorCasa = await houseValue(maps[0]);
+  //  const valorCasa = await houseValue(maps[0]);
 
   const femaURL = await fema(maps[0]);
 

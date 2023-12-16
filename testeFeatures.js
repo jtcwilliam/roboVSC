@@ -3,51 +3,47 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
-  //["020-1064-0146", "$585,93"],
-  ["018-2090-3374", "$46.213,78"],
-  ["018-1045-1944", "$3.181,09"],
+
+  //["018-8040-1601", "$6.359,95"],
+  ["018-4115-4313", "$38.319,34"],
+  ["018-2049-1726", "$2.458,75"],
+  ["018-4076-2771", "$11.260,46"],
+  ["018-7012-0453", "$332,14"],
+  ["018-3067-257802", "$30.259,89"],
+  ["018-4078-2831", "$2.213,34"],
+
   /*
+  ['018-7076-2781','$1.373,42'], 
+ 
+  ['018-7154-5469','$494,23'], 
+  ['018-2156-5752','$20.931,33'], 
+  ['018-4043-1608','$24.250,47'], 
+  ['018-7092-3309','$6.036,54'], 
+  ['018-2021-0634','$8.332,94'], 
   
-  ["018-7047-1812", "$7.836,45"],
-  ["018-7037-1498", "$53.532,83"],
-  ["018-4016-0550", "$7.127,36"],
+  
+  
+  
+  ['018-3059-2296','$7.594,59'], 
+  ['018-7057-2112','$70.238,98'], 
+  ['018-1054-2294','$725,96'], 
+  ['018-3067-2551','$297,82'], 
+  ['018-2125-4586','$3.424,12'], 
+  ['028-1002-0166','$3.072,65'], 
+  ['018-8010-047601','$3.327,02'], 
+  ['018-4039-1449','$309,55'], 
+  ['018-1046-2008','$380,53'], 
+  ['018-2058-2107','$599,54'], 
+  ['018-7040-1610','$2.392,27'], 
+  ['018-4015-0530','$4.543,16'], 
+  ['018-8031-1302','$12.702,88'], 
+  ['018-4009-0303','$1.995,09'], 
+  ['018-8030-1258','$4.856,68'], 
+  ['018-7042-1646','$336,67'], 
+  ['018-7042-1648','$612,90'], 
+  ['018-7057-2119','$20.556,94'], 
+  ['018-2154-5709','$1.861,48']
 
-  ["018-2070-2583", "$740,90"],
-  ["018-2070-2585", "$505,90"],
-  ["018-2070-2586", "$505,90"],
-
-  ["018-2093-3520", "$3.249,69"],
-  ["018-1083-3464", "$625,81"],
-
-  ["018-2088-3310", "$45.565,96"],
-  ["018-2088-3314", "$3.836,20"],
-  ["018-8045-1783", "$3.905,89"],
-
-  ["018-4006-0212", "$34.371,49"],
-  ["021-1089-3332", "$2.458,09"],
-  ["018-8021-084201", "$72.531,50"],
-  ["018-2147-5485", "$2.702,75"],
-  ["018-4010-0336", "$34.948,59"],
-
-  ["018-8087-3347", "$3.462,48"],
-  ["018-2079-2890", "$18.190,18"],
-  ["018-2156-5758", "$6.320,14"],
-  ["018-4117-4445", "$1.915,30"],
-  ["018-8085-3244", "$3.643,50"],
-
-  ["018-7058-2166", "$2.173,38"],
-  ["018-4030-1082", "$2.907,63"],
-  ["018-8059-2343", "$1.167,30"],
-  ["018-7047-1818", "$57.564,27"],
-  ["018-8012-0557", "$6.959,18"],
-
-  ["018-8059-2371", "$52.090,34"],
-  ["018-4050-1876", "$316,72"],
-  ["018-2112-412002", "$1.196,41"],
-  ["018-4001-0007", "$5.390,02"],
-  ["018-4115-4358", "$18.344,25"],
-  ["018-4069-2538", "$2.428,42"],
-  ["018-8046-1834", "$13.960,45"],
   */
 ];
 
@@ -120,7 +116,7 @@ async function regrid(regridSearched, minimo) {
 
     retornoRegrid.push(taxinfo, appraiserUrl, coordenadas, urlRegrid, minimo);
 
-    //await regrid_browser.close();
+    await regrid_browser.close();
 
     return retornoRegrid;
   } catch (error) {}
@@ -128,6 +124,7 @@ async function regrid(regridSearched, minimo) {
 
 async function houseValue(addres) {
   try {
+    let dadosCasa;
     const browser = await puppeter.launch({ headless: false });
     const page = await browser.newPage();
     await page.setViewport({
@@ -148,63 +145,75 @@ async function houseValue(addres) {
 
     await page.waitForSelector("._1vzm3__dashboardSearchItem");
 
-    const casinha = await page.type('[type="text"]', `${addres}`);
+    addres = addres.replace(", EUA", "");
 
-    console.log(casinha);
+    await page.type('[type="text"]', `${addres}`);
 
     await page.focus('[type="text"]');
 
-    await page.waitForSelector("#react-autowhatever-1--item-0");
+    await page.waitForSelector(".react-autosuggest__suggestion-wrapper");
+    const foundHouse = await page.$(".react-autosuggest__suggestion-wrapper");
 
-    await page.click("#react-autowhatever-1--item-0");
+    
 
-    await page.waitForSelector("._3GqYV__title");
+    if (foundHouse != null) {
+      //await page.waitForSelector("#react-autowhatever-1--item-0");
 
-    let valorCasa = [];
+      await page.focus(".react-autosuggest__suggestion-wrapper");
 
-    const linhas = await page.$$("._2q6qs__value");
+      //await page.click("#react-autowhatever-1--item-0");
 
-    for (let index = 0; index < linhas.length; index++) {
-      const linha = linhas[index];
+      await page.click(".react-autosuggest__suggestion-wrapper");
 
-      const dado = await page.evaluate((linha) => linha.textContent, linha);
+      await page.waitForSelector("._3GqYV__title");
 
-      valorCasa.push(dado);
-    }
+      let valorCasa = [];
 
-    await page.waitForSelector(".CDqWq__rightSide");
+      const linhas = await page.$$("._2q6qs__value");
 
-    await page.click(
-      '[class="_3FtuS__border-blue _31TrE__wideButton _3LneW__tealButton"]'
-    );
+      for (let index = 0; index < linhas.length; index++) {
+        const linha = linhas[index];
 
-    const linhasHOA = await page.$$(".twfRj__item");
+        const dado = await page.evaluate((linha) => linha.textContent, linha);
 
-    let hoa;
-    for (let index = 0; index < linhasHOA.length; index++) {
-      const linha = linhasHOA[index];
-
-      const lHOA = await page.evaluate((linha) => linha.textContent, linha);
-
-      if (linhasHOA.indexOf(linha) == 9) {
-        hoa = lHOA;
+        valorCasa.push(dado);
       }
+
+      await page.waitForSelector(".CDqWq__rightSide");
+
+      await page.click(
+        '[class="_3FtuS__border-blue _31TrE__wideButton _3LneW__tealButton"]'
+      );
+
+      const linhasHOA = await page.$$(".twfRj__item");
+
+      let hoa;
+      for (let index = 0; index < linhasHOA.length; index++) {
+        const linha = linhasHOA[index];
+
+        const lHOA = await page.evaluate((linha) => linha.textContent, linha);
+
+        if (linhasHOA.indexOf(linha) == 9) {
+          hoa = lHOA;
+        }
+      }
+
+      hoa = hoa.replace("HOA/COA", "");
+
+      console.log(hoa, valorCasa[0]);
+
+      let linkHouse = page.url();
+
+      dadosCasa = [hoa, valorCasa[0], linkHouse];
+    } else {
+      dadosCasa = [null, null, null];
     }
-
-    hoa = hoa.replace("HOA/COA", "");
-
-    console.log(hoa, valorCasa[0]);
-
-    let linkHouse = page.url();
-
-    const casafinal = [hoa, valorCasa[0], linkHouse];
-
-    console.log(casafinal);
 
     await browser.close();
-    return casafinal;
+    return dadosCasa;
   } catch (error) {
-    reject(error);
+    dadosCasa = [null, null, null];
+    return dadosCasa;
   }
 }
 

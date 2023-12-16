@@ -93,8 +93,7 @@ async function regrid(regridSearched, minimo) {
 
     await regrid_page.focus('input[name="search"]');
  
-
-    await regrid_page.keyboard.press("Enter");
+ 
 
     return retornoRegrid;
   } catch (error) {}
@@ -174,7 +173,8 @@ async function houseValue(addres) {
     await browser.close();
     return casafinal;
   } catch (error) {
-    reject(error);
+    const casafinal = [null, null, null];
+    return casafinal;
   }
 }
 

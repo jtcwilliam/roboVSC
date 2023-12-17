@@ -4,7 +4,7 @@ const mysql = require("mysql2");
 
 let parcels = [
   ["020-1064-0149", "$3.128,44"],
-  //["020-1064-0146", "$585,93"],
+  ["020-1064-0146", "$585,93"],
   //["018-2090-3374", "$46.213,78"],
 
   /*
@@ -74,8 +74,10 @@ async function regrid(regridSearched, minimo) {
 
     await regrid_page.waitForNavigation();
 
+  
     await regrid_page.goto(
-      "https://william-ferreira.regrid.com/m/vscquerys?_gl=1*p8gdih*_ga*MTM4MjM1NTU0Ny4xNzAyNzM2NzQ3*_ga_NGWML8455J*MTcwMjczNjc0Ni4xLjEuMTcwMjczNjc0OS4wLjAuMA..",
+     // "https://william-ferreira.regrid.com/m/vscquerys?_gl=1*p8gdih*_ga*MTM4MjM1NTU0Ny4xNzAyNzM2NzQ3*_ga_NGWML8455J*MTcwMjczNjc0Ni4xLjEuMTcwMjczNjc0OS4wLjAuMA..",
+     "https://app.regrid.com/us",
       {
         timeout: 60000,
         waitUntil: "domcontentloaded",
@@ -96,6 +98,7 @@ async function regrid(regridSearched, minimo) {
  
 
     return retornoRegrid;
+ 
   } catch (error) {}
 }
 

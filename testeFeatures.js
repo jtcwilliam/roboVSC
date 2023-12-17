@@ -3,48 +3,31 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
+   
 
-  //["018-8040-1601", "$6.359,95"],
-  ["018-4115-4313", "$38.319,34"],
-  ["018-2049-1726", "$2.458,75"],
-  ["018-4076-2771", "$11.260,46"],
-  ["018-7012-0453", "$332,14"],
-  ["018-3067-257802", "$30.259,89"],
-  ["018-4078-2831", "$2.213,34"],
 
-  /*
-  ['018-7076-2781','$1.373,42'], 
  
-  ['018-7154-5469','$494,23'], 
-  ['018-2156-5752','$20.931,33'], 
-  ['018-4043-1608','$24.250,47'], 
-  ['018-7092-3309','$6.036,54'], 
-  ['018-2021-0634','$8.332,94'], 
-  
-  
-  
-  
-  ['018-3059-2296','$7.594,59'], 
-  ['018-7057-2112','$70.238,98'], 
-  ['018-1054-2294','$725,96'], 
-  ['018-3067-2551','$297,82'], 
-  ['018-2125-4586','$3.424,12'], 
-  ['028-1002-0166','$3.072,65'], 
-  ['018-8010-047601','$3.327,02'], 
-  ['018-4039-1449','$309,55'], 
-  ['018-1046-2008','$380,53'], 
-  ['018-2058-2107','$599,54'], 
-  ['018-7040-1610','$2.392,27'], 
-  ['018-4015-0530','$4.543,16'], 
-  ['018-8031-1302','$12.702,88'], 
-  ['018-4009-0303','$1.995,09'], 
-  ['018-8030-1258','$4.856,68'], 
-  ['018-7042-1646','$336,67'], 
-  ['018-7042-1648','$612,90'], 
-  ['018-7057-2119','$20.556,94'], 
-  ['018-2154-5709','$1.861,48']
+   
 
-  */
+ 
+ 
+  ['018-2020-0594','$16.983,29'],
+  ['018-2164-6003','$880,26'],
+  ['018-4086-3156','$9.718,33'],
+  ['018-4117-4457','$35.515,43'],
+  ['018-8085-3284','$3.298,67'],
+  ['018-3083-3343','$16.275,94'],
+  ['018-2032-1050','$9.177,09'],
+  ['018-1057-2450','$434,01'],
+  ['018-7053-1988','$2.176,30'],
+  ['018-8034-1455','$4.212,83'],
+  ['023-1019-113503','$295,78'],
+  ['018-1032-1416','$560,98'],
+  ['018-2108-4011','$15.443,70'], 
+  ['018-3020-0734','$79.715,75'],
+  ['018-8057-2290','$10.867,84'],
+  ['018-2122-4516','$24.809,33']  
+ 
 ];
 
 async function regrid(regridSearched, minimo) {
@@ -67,13 +50,10 @@ async function regrid(regridSearched, minimo) {
 
     await regrid_page.waitForNavigation();
 
-    await regrid_page.goto(
-      "https://william-ferreira.regrid.com/m/vscquerys?_gl=1*p8gdih*_ga*MTM4MjM1NTU0Ny4xNzAyNzM2NzQ3*_ga_NGWML8455J*MTcwMjczNjc0Ni4xLjEuMTcwMjczNjc0OS4wLjAuMA..",
-      {
-        timeout: 60000,
-        waitUntil: "domcontentloaded",
-      }
-    );
+    await regrid_page.goto("https://app.regrid.com/us", {
+      timeout: 60000,
+      waitUntil: "domcontentloaded",
+    });
 
     await regrid_page.type('[name="search"]', regridSearched);
 
@@ -123,10 +103,10 @@ async function regrid(regridSearched, minimo) {
 }
 
 async function houseValue(addres) {
+  let dadosCasa;
+  let browser = await puppeter.launch({ headless: false });
+  let page = await browser.newPage();
   try {
-    let dadosCasa;
-    const browser = await puppeter.launch({ headless: false });
-    const page = await browser.newPage();
     await page.setViewport({
       width: 1920,
       height: 1080,
@@ -154,11 +134,7 @@ async function houseValue(addres) {
     await page.waitForSelector(".react-autosuggest__suggestion-wrapper");
     const foundHouse = await page.$(".react-autosuggest__suggestion-wrapper");
 
-    
-
-    if (foundHouse != null) {
-      //await page.waitForSelector("#react-autowhatever-1--item-0");
-
+    if (foundHouse != undefined) {
       await page.focus(".react-autosuggest__suggestion-wrapper");
 
       //await page.click("#react-autowhatever-1--item-0");
@@ -205,13 +181,19 @@ async function houseValue(addres) {
       let linkHouse = page.url();
 
       dadosCasa = [hoa, valorCasa[0], linkHouse];
+
+      // await page.click('[class="_2bApT__iconQuestion"]');
+      await browser.close();
+      return dadosCasa;
     } else {
       dadosCasa = [null, null, null];
-    }
 
-    await browser.close();
-    return dadosCasa;
+      await browser.close();
+
+      return dadosCasa;
+    }
   } catch (error) {
+    await browser.close();
     dadosCasa = [null, null, null];
     return dadosCasa;
   }
@@ -356,25 +338,6 @@ async function constuirCasa(parcelID, minimo) {
     valorCasa[0],
     valorCasa[2]
   );
-
-  /*
-
-  const bancoDados = await inserirBanco(
-    parcelID,
-    femaURL,
-    "17",
-    regridCasa[3],
-    regridCasa[1],
-    maps[1],
-    regridCasa[4],
-    regridCasa[0],
-    dataUP,
-    null,
-    "1",
-    null,
-    null
-  );
-  */
 
   console.log(`\n fim do parcel: ${parcelID} \n`);
 }

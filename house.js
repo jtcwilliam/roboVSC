@@ -1,9 +1,9 @@
-const puppeter = require("puppeteer");
-
 async function houseValue(addres) {
+  let dadosCasa;
+  let landValue;
+  let browser = await puppeter.launch({ headless: false });
+  let page = await browser.newPage();
   try {
-    const browser = await puppeter.launch({ headless: false });
-    const page = await browser.newPage();
     await page.setViewport({
       width: 1920,
       height: 1080,
@@ -22,16 +22,21 @@ async function houseValue(addres) {
 
     await page.waitForSelector("._1vzm3__dashboardSearchItem");
 
+    addres = addres.replace(", EUA", "");
+
     await page.type('[type="text"]', `${addres}`);
 
     await page.focus('[type="text"]');
 
+    await page.waitForSelector(".react-autosuggest__suggestion-wrapper");
     const foundHouse = await page.$(".react-autosuggest__suggestion-wrapper");
 
-    if (foundHouse != null) {
-      await page.waitForSelector("#react-autowhatever-1--item-0");
+    if (foundHouse != undefined) {
+      await page.focus(".react-autosuggest__suggestion-wrapper");
 
-      await page.click("#react-autowhatever-1--item-0");
+      //await page.click("#react-autowhatever-1--item-0");
+
+      await page.click(".react-autosuggest__suggestion-wrapper");
 
       await page.waitForSelector("._3GqYV__title");
 
@@ -61,9 +66,37 @@ async function houseValue(addres) {
 
         const lHOA = await page.evaluate((linha) => linha.textContent, linha);
 
+        // console.log(lHOA);
+
         if (linhasHOA.indexOf(linha) == 9) {
           hoa = lHOA;
         }
+      }
+      await page.waitForSelector("._1TI2k__label");
+      await page.waitForSelector("._1NSwY__value");
+
+      const linhasLand = await page.$$("._1NSwY__value  ");
+      //_1TI2k__label
+      const labelLand = await page.$$("._1TI2k__label  ");
+
+      for (let index = 0; index < linhasLand.length; index++) {
+        const linha = linhasLand[index];
+        const label = labelLand[index];
+
+        const lLand = await page.evaluate((linha) => linha.textContent, linha);
+        const lbl_land = await page.evaluate(
+          (label) => label.textContent,
+          label
+        );
+
+        //  console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
+
+        if (labelLand.indexOf(label) == 40) {
+          console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
+        }
+        /*      40   - 39
+    
+        */
       }
 
       hoa = hoa.replace("HOA/COA", "");
@@ -72,16 +105,24 @@ async function houseValue(addres) {
 
       let linkHouse = page.url();
 
-      const casafinal = [hoa, valorCasa[0], linkHouse];
-    } else {
-      const casafinal = [null, null, null];
-    }
-    await browser.close();
+      dadosCasa = [hoa, valorCasa[0], linkHouse];
 
-    return casafinal;
+      // await page.click('[class="_2bApT__iconQuestion"]');
+      await browser.close();
+      return dadosCasa;
+    } else {
+      dadosCasa = [null, null, null];
+
+      await browser.close();
+
+      return dadosCasa;
+    }
   } catch (error) {
-    return false;
+    console.log(error);
+    await browser.close();
+    dadosCasa = [null, null, null];
+    return dadosCasa;
   }
 }
 
-console.log(houseValue("228 E Donald St, South Bend, IN 46613"));
+export { houseValue };

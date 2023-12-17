@@ -1,5 +1,6 @@
 const puppeter = require("puppeteer");
 
+ 
 const mysql = require("mysql2");
 
 let parcels = [
@@ -82,7 +83,7 @@ async function regrid(regridSearched, minimo) {
 
 async function houseValue(addres) {
   let dadosCasa;
-  let landValue;
+ 
   let browser = await puppeter.launch({ headless: false });
   let page = await browser.newPage();
   try {
@@ -175,12 +176,10 @@ async function houseValue(addres) {
 
         if (labelLand.indexOf(label) == 40) {
           console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
-
-          landValue = lLand;
         }
         /*      40   - 39
-    
-        */
+      
+          */
       }
 
       hoa = hoa.replace("HOA/COA", "");
@@ -189,13 +188,13 @@ async function houseValue(addres) {
 
       let linkHouse = page.url();
 
-      dadosCasa = [hoa, valorCasa[0], linkHouse, landValue];
+      dadosCasa = [hoa, valorCasa[0], linkHouse];
 
       // await page.click('[class="_2bApT__iconQuestion"]');
       await browser.close();
       return dadosCasa;
     } else {
-      dadosCasa = [null, null, null, null];
+      dadosCasa = [null, null, null];
 
       await browser.close();
 
@@ -275,8 +274,7 @@ async function inserirBanco(
   marketValue,
   status,
   hoa,
-  details,
-  landValue
+  details
 ) {
   try {
     const connection = mysql.createConnection({
@@ -286,7 +284,7 @@ async function inserirBanco(
       database: "appraiser",
     });
 
-    let stmt = `INSERT INTO apps ( parcel ,flood,auction, regridUrl, aprraisalUrl, google, minimo , observacao , dataUp,marketValue ,status, hoa, details, landValue)  VALUES ?`;
+    let stmt = `INSERT INTO apps ( parcel ,flood,auction, regridUrl, aprraisalUrl, google, minimo , observacao , dataUp,marketValue ,status, hoa, details)  VALUES ?`;
     let todos = [
       [
         parcel,
@@ -302,7 +300,6 @@ async function inserirBanco(
         status,
         hoa,
         details,
-        landValue,
       ],
     ];
 
@@ -348,8 +345,7 @@ async function constuirCasa(parcelID, minimo) {
     valorCasa[1],
     "1",
     valorCasa[0],
-    valorCasa[2],
-    valorCasa[3]
+    valorCasa[2]
   );
 
   console.log(`\n fim do parcel: ${parcelID} \n`);

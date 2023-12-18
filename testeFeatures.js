@@ -171,7 +171,7 @@ async function houseValue(addres) {
           label
         );
 
-        //  console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
+        console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
 
         if (labelLand.indexOf(label) == 40) {
           console.log(labelLand.indexOf(label) + ":" + lbl_land + "  " + lLand);
@@ -185,7 +185,7 @@ async function houseValue(addres) {
 
       hoa = hoa.replace("HOA/COA", "");
 
-      console.log(hoa, valorCasa[0]);
+      //console.log(hoa, valorCasa[0]);
 
       let linkHouse = page.url();
 

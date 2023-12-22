@@ -3,10 +3,7 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
-
-
-
-  ["018-4001-0007", "$5.390,02"] 
+  ["018-4001-0007", "$5.390,02"],
   /*
   ["018-4115-4358", "$18.344,25"],
   ["018-4069-2538", "$2.428,42"],
@@ -34,7 +31,7 @@ let parcels = [
   ["018-8057-2290", "$10.867,84"],
   ["018-2122-4516", "$24.809,33"],
 
-  */,
+  */
 ];
 
 async function regrid(regridSearched, minimo) {
@@ -45,26 +42,24 @@ async function regrid(regridSearched, minimo) {
 
     const regrid_page = await regrid_browser.newPage();
 
-    await regrid_page.goto("https://app.regrid.com/", {
+    await regrid_page.goto("https://app.regrid.com/us/#b=admin", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
-
-    await regrid_page.type('[name="user[email]"]', "jtcwilliam@gmail.com");
-    await regrid_page.type('[name="user[password]"]', "harlem");
 
     await regrid_page.keyboard.press("Enter");
 
     await regrid_page.waitForNavigation();
 
-    await regrid_page.goto("https://app.regrid.com/us", {
-      timeout: 60000,
-      waitUntil: "domcontentloaded",
-    });
-
     await regrid_page.type('[name="search"]', regridSearched);
 
+    await regrid_page.waitForSelector(".all-results");
+
+    await regrid_page.click('[data-skip-pjax="1"]');
+
     await regrid_page.waitForSelector(".parcel-details");
+
+    console.log("abriu o regrid");
 
     const linhas = await regrid_page.$$("tr");
 

@@ -26,7 +26,7 @@ async function regrid(regridSearched, minimo) {
 
     await regrid_page.waitForSelector(".all-results");
 
-    console.log("james");
+ 
 
     await regrid_page.click('[data-skip-pjax="1"]');
     console.log("william");

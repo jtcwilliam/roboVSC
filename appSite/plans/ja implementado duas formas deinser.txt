@@ -1,0 +1,7 @@
+ja implementado duas formas deinserir o parcel id
+
+- se   vier a partir do appraizer, o seja, a pessoa clicou e ja vem no get;
+
+- se não vier, a pessoa seleciona no combo
+
+

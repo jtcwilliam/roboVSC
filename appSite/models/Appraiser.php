@@ -135,12 +135,24 @@ class Appraiser
 
 
 
-    public function listAvaliatedDirector()
+    public function listAvaliatedDirector( $filtro =null)
     {
 
 
         $sql = "SELECT * FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
-        where st.idstatus !=0 and ratingDirector   is not null   order by ratingDirector asc";
+        where st.idstatus !=0 and ratingDirector is not null ";
+        
+        
+        if($filtro !=null){
+
+            $sql .= $filtro;
+        }
+        
+        
+        
+        $sql .= "   order by ratingDirector asc";
+
+     
 
     
 

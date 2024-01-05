@@ -2,45 +2,16 @@ const puppeter = require("puppeteer");
 
 const mysql = require("mysql2");
 
+let propriedades =0;
+
 let parcels = [
- 
-    
-  
-  ["018-8085-3268", "$6.085,14"],
-  ["021-1094-3671", "$3.785,81"],
-  ["018-4080-2914", "$25.058,27"],
-  ["018-8013-0620", "$3.677,78"],
-  ["018-1026-1140", "$4.103,37"],
   
  
-  ["018-2092-3489", "$9.152,76"],
-  ["018-7037-1486", "$15.429,08"],
-  ["018-6057-1973", "$5.485,27"],
-  ["018-2050-1768", "$2.060,78"],
-  ["018-1021-088201", "$3.533,59"],
-  ["018-3075-2960", "$3.925,95"],
-  ["018-7008-0306", "$1.094,53"],
-  ["018-2048-1703", "$3.704,43"],
-  ["018-2048-169801", "$2.908,19"],
-  ["018-8059-2337", "$6.088,02"],
-  ["018-1063-2713", "$3.719,60"],
-  ["018-7024-0937", "$1.603,40"],
-  ["018-2023-0718", "$478,23"],
-  ["018-6078-2743", "$7.996,20"],
-  ["018-8108-4079", "$3.448,49"],
-  ["018-8108-4080", "$3.567,43"],
-  ["018-2155-5728", "$3.217,10"],
-  ["018-2122-4491", "$825,71"],
-  ["018-2107-3990", "$14.473,79"],
-  ["018-8049-1987", "$609,43"],
-  ["018-8049-1990", "$609,43"],
-  ["018-2194-7272", "$26.144,88"],
-  ["018-3076-3023", "$1.303,94"],
-  ["018-2194-7294", "$12.182,00"],
-  ["018-2021-0622", "$19.933,15"],
-  ["018-4025-0856", "$2.664,23"],
-  ["018-7052-1961", "$371,75"],
-  */
+  
+  ['45-07-12-252-009.000-004','8470,63'],
+  
+  
+ 
 ];
 
 async function regrid(regridSearched, minimo) {
@@ -73,8 +44,8 @@ async function regrid(regridSearched, minimo) {
     const linhas = await regrid_page.$$("tr");
 
     let coordenadas;
-    let appraiserUrl;
-    let taxinfo;
+    let appraiserUrl = null;
+    let taxinfo = null;
 
     for (let index = 0; index < linhas.length; index++) {
       const linha = linhas[index];
@@ -86,6 +57,8 @@ async function regrid(regridSearched, minimo) {
 
       let coord = dado.includes("Centroid Coordinates");
 
+      /*
+
       let urlApp = dado.includes("Source URL");
 
       let tax = dado.includes("Tax Info URL");
@@ -96,11 +69,18 @@ async function regrid(regridSearched, minimo) {
 
       if (urlApp) {
         appraiserUrl = dado.replace("Source URL", "");
-      }
+      }*/
+
+
+
+
 
       if (coord) {
         coordenadas = dado.replace("Centroid Coordinates", "");
       }
+
+
+
     }
 
     const urlRegrid = regrid_page.url();
@@ -363,6 +343,10 @@ async function inserirBanco(
       // get inserted rows
       console.log("Row inserted:" + results.affectedRows);
 
+      propriedades+=1;
+
+      console.log(propriedades);
+
       connection.close();
     });
   } catch (error) {
@@ -388,7 +372,7 @@ async function constuirCasa(parcelID, minimo) {
   const bancoDados = await inserirBanco(
     parcelID,
     femaURL,
-    "17",
+    "18",
     regridCasa[3],
     regridCasa[1],
     maps[1],

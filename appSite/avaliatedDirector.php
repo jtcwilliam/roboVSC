@@ -3,7 +3,7 @@
 
 
 session_start();
- 
+
 if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']['0']['status'] != '6') {
 
     echo '<h3>Acesso Negado';
@@ -15,9 +15,12 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
     include_once 'models/Appraiser.php';
     include_once 'models/Regrid.php';
+    include_once 'models/auctions.php';
 
 
 
+
+    $objAuction = new Auction();
     $objReg = new Regrid();
     $objApp = new Appraiser();
 
@@ -26,7 +29,7 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
     if (isset($_POST['loadDados'])) {
 
-        $dadosApp = $objApp->listAvaliatedDirector();
+        $dadosApp = $objApp->listAvaliatedDirector('  and auction =' . $_POST['county'] . '  ');
         // 'A Plus'
 
 ?>
@@ -289,10 +292,6 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
 
 
-
-
-
-
         ?>
         <!doctype html>
         <html class="no-js" lang="en" dir="ltr">
@@ -436,11 +435,58 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
 
 
+                    <fieldset class="fieldset">
+                        <legend><B>Please Select the county</B></legend>
+
+
+                        <?php
+
+                        $auctions = $objAuction->listAuctions();
+
+
+
+
+                        ?>
+
+
+                        <div>
+                            <div class="grid-x grid-padding-x">
+                                <div class="cell small-5 ">
+                                    <label for="cbCounty">
+                                        <select id="cbCounty" style="height: 4vh;">
+
+                                            <?php
+
+                                            foreach ($auctions as $key => $value) {
+                                            ?>
+                                                <option value="<?= $value['idauction'] ?>"><?= $value['state_auction'] . " - " . $value['county_auction'] . " - " . $value['date_auction'] ?></option>
+
+
+                                            <?php
+                                            }
+
+                                            ?>
+
+                                        </select>
+
+                                    </label>
+
+                                </div>
+                                <div class="cell small-2 ">
+                                    <a onclick=" carregarDados(   'tabelasComDados')" class="button succes" style="height: 4vh;">Click here to search</a>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </fieldset>
+
 
                     <fieldset class="fieldset">
 
                         <legend>
-                            <h3>All Favorites Properties</h3>
+                            <h3 id="countName"> </h3>
                         </legend>
 
                         <div id="tabelasComDados">
@@ -474,13 +520,17 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
             <script>
                 $('#load').hide();
 
-                function carregarDados(status, grade) {
+                function carregarDados(grade) {
 
                     $('#load').show();
+
+                    var nomeCount = $("#cbCounty option:selected").text();
 
                     var formData = {
                         status: status,
                         grade: grade,
+                        county: $('#cbCounty').val(),
+                        
                         loadDados: '1'
                     };
                     $.ajax({
@@ -492,6 +542,11 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
                         })
                         .done(function(data) {
 
+                            console.log(data);
+
+                           
+                            $('#countName').html(nomeCount);
+
                             $('#load').hide();
 
                             $('#' + grade).html(data);
@@ -502,7 +557,7 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
                 }
 
 
-                carregarDados('1', 'tabelasComDados');
+                //   carregarDados(   'tabelasComDados');
             </script>
         </body>
 

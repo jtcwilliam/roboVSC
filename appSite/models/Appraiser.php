@@ -60,37 +60,6 @@ class Appraiser
         $sql = "select rating ,county_app , state_auction ,trim(parcel_id) as 'parcel_id', property_address, valor_mercado, owers_name from appraiser
          ap inner join auction au on au.idauction = ap.auctions  where  auctions  =" . $idcount;
 
-
-
-
-
-        $executar = mysqli_query($this->getConexao(), $sql);
-
-
-
-
-
-        while ($row = mysqli_fetch_assoc($executar)) {
-            $dados[] =  $row;
-        }
-
-        if (empty($dados)) {
-
-            return false;
-        } else {
-            return $dados;
-        }
-    }
-
-
-
-
-    public function listPropert_Favorites($idstatus, $rating)
-    {
-        $sql = "SELECT * FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
-        where st.idstatus =" . $idstatus . " and   ratingDirector= '" . $rating . "'    order by idapps desc";
-
-
         $executar = mysqli_query($this->getConexao(), $sql);
 
         while ($row = mysqli_fetch_assoc($executar)) {
@@ -105,6 +74,42 @@ class Appraiser
         }
     }
 
+ 
+
+//select somente para listar os favoritos
+public function listPropert_Favorites( $filtro =null)
+{
+    $sql = "SELECT * , DATE_FORMAT(dataUp, '%m/%d/%Y')  as dataUp  FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
+
+    where st.idstatus =4 and  ratingDirector in('A Plus', 'A' ) ";
+        
+    if($filtro !=null){
+
+        $sql .= $filtro;
+    }
+    
+    $sql .= "   order by ratingDirector DESC";
+
+ 
+   
+
+    $executar = mysqli_query($this->getConexao(), $sql);
+
+    while ($row = mysqli_fetch_assoc($executar)) {
+
+        $dados[] =  $row;
+
+    }
+
+    if (empty($dados)) {
+
+        return false;
+
+    } else {
+
+        return $dados;
+    }
+}
 
     public function listHousesFiltered($where=null)
     {
@@ -116,7 +121,8 @@ class Appraiser
         
         $sql .= "  order by ratingDirector asc";
 
-    
+
+     
 
 
         $executar = mysqli_query($this->getConexao(), $sql);
@@ -139,7 +145,7 @@ class Appraiser
     {
 
 
-        $sql = "SELECT * FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
+        $sql = "SELECT *, DATE_FORMAT(dataUp, '%m/%d/%Y')  as dataUp  FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
         where st.idstatus !=0 and ratingDirector is not null ";
         
         
@@ -151,6 +157,9 @@ class Appraiser
         
         
         $sql .= "   order by ratingDirector asc";
+
+
+         
 
      
 
@@ -171,13 +180,22 @@ class Appraiser
         }
     }
 
-    public function listAllProperties()
+    public function listAllProperties($filtro = null)
     {
 
 
         $sql = "SELECT * FROM apps  ap inner join status st on st.idstatus = ap.status inner join auction au on au.idauction = ap.auction
-        where st.idstatus !=0   order by idapps desc";
+        where st.idstatus =4     ";
 
+        if($filtro != null){
+            $sql.=$filtro;
+        }
+
+
+        $sql .= '  order by idapps desc ';
+
+
+  
 
 
 

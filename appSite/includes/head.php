@@ -1,4 +1,3 @@
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -6,6 +5,8 @@
   <title>Kleber & Ruth Properties || Properties</title>
   <link rel="stylesheet" href="css/foundation.css">
   <link rel="stylesheet" href="css/app.css">
+
+  
   <style>
     .subnav-hero-section {
       text-align: center;

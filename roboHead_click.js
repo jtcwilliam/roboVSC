@@ -5,14 +5,16 @@ const mysql = require("mysql2");
 let propriedades = 0;
 
 let parcels = [
-  ["00047-009-020", "$2,007.89"],
+  /*["00047-009-020", "$2,007.89"],
   ["01920-000-000", "$3,929.53"],
   ["01929-000-000", "$4,243.61"],
   ["23493-000-000", "$3,528.71"],
+  
   ["02135-000-000", "$2,280.42"],
   ["05991-203-000", "$5,972.76"],
   ["11929-113-000", "$1,080.30"],
   ["16050-040-000", "$2,184.71"],
+  */
   ["17242-000-000", "$3,758.76"]
 ];
 
@@ -35,9 +37,9 @@ async function regrid(regridSearched, minimo) {
 
     await regrid_page.type('[name="search"]', regridSearched);
 
-    await regrid_page.waitForSelector(".all-results");
+    //await regrid_page.waitForSelector(".all-results");
 
-    await regrid_page.click('[data-skip-pjax="1"]');
+    //await regrid_page.click('[data-skip-pjax="1"]');
 
     await regrid_page.waitForSelector(".parcel-details");
 

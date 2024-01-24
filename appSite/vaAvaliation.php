@@ -8,7 +8,7 @@
 
 
 session_start();
- 
+
 if ($_SESSION['usuarioLogado']['logado'] == false) {
 
     echo '<h3>Acesso Negado';
@@ -55,7 +55,7 @@ if ($_SESSION['usuarioLogado']['logado'] == false) {
 
                 include_once 'includes/navigation.php'
                 ?>
-            
+
 
 
 
@@ -68,8 +68,8 @@ if ($_SESSION['usuarioLogado']['logado'] == false) {
 
 
             <div style="margin-top: 8vh;  margin-left: 20px; margin-right: 20px ;margin-bottom: 10vh;">
-            
-            <h6>Hello Virtual Agent <span id="nome"><?=$_SESSION['usuarioLogado'][0]['nomeUsuario']?></span></h6>
+
+                <h6>Hello Virtual Agent <span id="nome"><?= $_SESSION['usuarioLogado'][0]['nomeUsuario'] ?></span></h6>
 
 
 
@@ -83,11 +83,11 @@ if ($_SESSION['usuarioLogado']['logado'] == false) {
 
                 </div>
 
-         
 
-         
-    
-  
+
+
+
+
 
 
                 <fieldset class="fieldset">
@@ -114,10 +114,10 @@ if ($_SESSION['usuarioLogado']['logado'] == false) {
 
 
 
-        <script src="js/vendor/jquery.js"></script>
-        <script src="js/vendor/what-input.js"></script>
-        <script src="js/vendor/foundation.js"></script>
-        <script src="js/app.js"></script>
+        <?php
+
+        include 'includes/footerJS.php';
+        ?>
 
 
         <script>
@@ -152,7 +152,7 @@ if ($_SESSION['usuarioLogado']['logado'] == false) {
                     });
             }
 
-       
+
 
             carregarDados('1', 'tabelasComDados');
         </script>

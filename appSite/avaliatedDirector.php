@@ -423,6 +423,11 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
                 <div style="margin-top: 8vh;  margin-left: 10px; margin-right: 10px ;margin-bottom: 10vh;">
 
+                <center>
+                        <h1>Avaliated by Director</h1>
+
+                    </center>
+
                     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
 
                     <div class="panel callout radius" id="load" style="background-color: red; color: white;">
@@ -510,11 +515,11 @@ if ($_SESSION['usuarioLogado']['logado'] == false  || $_SESSION['usuarioLogado']
 
 
 
+            <?php
 
-            <script src="js/vendor/jquery.js"></script>
-            <script src="js/vendor/what-input.js"></script>
-            <script src="js/vendor/foundation.js"></script>
-            <script src="js/app.js"></script>
+include 'includes/footerJS.php';
+?>
+
 
 
             <script>

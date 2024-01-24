@@ -38,6 +38,14 @@
 
             <ul class="menu">
 
+            <li><a href="createAppraiser.php">Create Appraiser </a></li>
+
+                <li><a href="favorite.php">Favorites </a></li>
+
+                
+
+
+                <li><a href="consultAppraiser.php">Consult Parcel </a></li>
                 <li><a href="avaliatedDirector.php">My Avaliation </a></li>
 
                 <li><a href="list_housesCountyDirector.php">List All Propertys</a></li>

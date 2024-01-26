@@ -23,15 +23,15 @@ class Conexao
 
 
 
-            $user = 'appraiser';
+            $user = 'prod_appraiser';
 
             $password = 'M@r1@He1en@';
 
-            $db = 'appraiser';
+            $db = 'prod_appraiser';
 
 
 
-            $host = 'appraiser.mysql.dbaas.com.br';
+            $host = 'prod_appraiser.mysql.dbaas.com.br';
 
 
   /*

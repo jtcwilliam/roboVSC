@@ -274,7 +274,7 @@ public function listPropert_Favorites( $filtro =null)
         }
 
 
-
+ 
 
 
         $executar = mysqli_query($this->getConexao(), $sql);

@@ -375,7 +375,7 @@ async function constuirCasa(parcelID, minimo) {
   const bancoDados = await inserirBanco(
     parcelID,
     femaURL,
-    "21",
+    "22",
     regridCasa[3],
     regridCasa[1],
     maps[1],

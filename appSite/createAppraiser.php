@@ -1,5 +1,11 @@
 <?php
 
+
+ini_set('display_errors',1);
+ini_set('display_startup_erros',1);
+error_reporting(E_ALL);
+
+ 
 include_once 'models/Appraiser.php';
 include_once 'models/Regrid.php';
 
@@ -9,7 +15,7 @@ $objReg = new Regrid();
 $objApp = new Appraiser();
 
 
-$dadosApp = $objApp->listPropertys();
+//$dadosApp = $objApp->listPropertys();
 
 
 ?>

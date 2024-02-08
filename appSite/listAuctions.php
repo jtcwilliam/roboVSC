@@ -15,7 +15,7 @@ $objReg = new Regrid();
 $objApp = new Appraiser();
 
 
-$dadosApp = $objApp->listPropertys();
+//$dadosApp = $objApp->listPropertys();
 
 
 ?>

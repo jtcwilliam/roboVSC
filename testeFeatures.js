@@ -3,10 +3,7 @@ const puppeter = require("puppeteer");
 const mysql = require("mysql2");
 
 let parcels = [
-
-
-
-  ["018-4001-0007", "$5.390,02"] 
+  ["018-4001-0007", "$5.390,02"],
   /*
   ["018-4115-4358", "$18.344,25"],
   ["018-4069-2538", "$2.428,42"],
@@ -34,14 +31,27 @@ let parcels = [
   ["018-8057-2290", "$10.867,84"],
   ["018-2122-4516", "$24.809,33"],
 
-  */,
+  */
 ];
 
 async function regrid(regridSearched, minimo) {
   try {
+    console.log('1');
     let retornoRegrid = [];
 
-    const regrid_browser = await puppeter.launch({ headless: false });
+    console.log('2');
+
+    const regrid_browser = await puppeteer.launch({
+      headless: false,
+
+      
+//C:\xampp\htdocs\roboVSC\node_modules\chromium\lib\chromium\chrome-win\chrome.exe
+
+ 
+      executablePath:  "C:/xampp/htdocs/roboVSC/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe"
+    });
+
+    console.log("ds");
 
     const regrid_page = await regrid_browser.newPage();
 
@@ -356,6 +366,10 @@ async function inserirBanco(
 
 async function constuirCasa(parcelID, minimo) {
   console.log(`Inicio Parcel: ${parcelID}`);
+
+
+
+
   const regridCasa = await regrid(parcelID, minimo);
 
   const maps = await googleMaps(regridCasa[2]);

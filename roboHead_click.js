@@ -5,17 +5,8 @@ const mysql = require("mysql2");
 let propriedades = 0;
 
 let parcels = [
-  /*["00047-009-020", "$2,007.89"],
-  ["01920-000-000", "$3,929.53"],
-  ["01929-000-000", "$4,243.61"],
-  ["23493-000-000", "$3,528.71"],
+  ["00047-009-020", "$2,007.89"],
   
-  ["02135-000-000", "$2,280.42"],
-  ["05991-203-000", "$5,972.76"],
-  ["11929-113-000", "$1,080.30"],
-  ["16050-040-000", "$2,184.71"],
-  */
-  ["17242-000-000", "$3,758.76"]
 ];
 
 async function regrid(regridSearched, minimo) {
@@ -26,16 +17,26 @@ async function regrid(regridSearched, minimo) {
 
     const regrid_page = await regrid_browser.newPage();
 
-    await regrid_page.goto("https://app.regrid.com/us/#b=admin", {
+    await regrid_page.goto("https://app.regrid.com/us#", {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
+
+    //
+
+
+    console.log('saida de dados');
+
+    //await regrid_page.type('[name="search"]', regridSearched);
+
+
+    await regrid_page.type('[id="glmap-search-query"]', regridSearched);
 
     await regrid_page.keyboard.press("Enter");
 
     await regrid_page.waitForNavigation();
 
-    await regrid_page.type('[name="search"]', regridSearched);
+   
 
     //await regrid_page.waitForSelector(".all-results");
 
@@ -289,10 +290,10 @@ async function inserirBanco(
 ) {
   try {
     const connection = mysql.createConnection({
-      host: "appraiser.mysql.dbaas.com.br",
-      user: "appraiser",
+      host: "prod_appraiser.mysql.dbaas.com.br",
+      user: "prod_appraiser",
       password: "M@r1@He1en@",
-      database: "appraiser",
+      database: "prod_appraiser",
 
       /*
       host: "127.0.0.1",
@@ -367,7 +368,7 @@ async function constuirCasa(parcelID, minimo) {
   const bancoDados = await inserirBanco(
     parcelID,
     femaURL,
-    "21",
+    "22",
     regridCasa[3],
     regridCasa[1],
     maps[1],

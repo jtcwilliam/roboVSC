@@ -20,7 +20,7 @@ async function regrid(regridSearched, minimo) {
   try {
     let retornoRegrid = [];
 
-    const regrid_browser = await puppeter.launch({ headless: false });
+    const regrid_browser = await puppeter.launch({ headless: true });
 
     const regrid_page = await regrid_browser.newPage();
 
@@ -351,6 +351,10 @@ async function constuirCasa(parcelID, minimo) {
   console.log(`Inicio Parcel: ${parcelID}`);
   const regridCasa = await regrid(parcelID, minimo);
 
+
+
+
+  /*
   const maps = await googleMaps(regridCasa[2]);
 
   const valorCasa = await houseValue(maps[0]);
@@ -380,6 +384,8 @@ async function constuirCasa(parcelID, minimo) {
   );
 
   console.log(`\n fim do parcel: ${parcelID} \n`);
+
+  */
 }
 
 //['018-7038-1546','$32.151,29'],
